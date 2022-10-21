@@ -2,7 +2,7 @@
 
 It has integrations with the [NHS COVID Pass Back End](https://github.com/nhsx/covid-pass-backend) which itself integrates with NHSD to retrieve an individuals medical exemptions and test results.
 
-The main purpose of the NHS COVID Pass Letter Service Back End is to manage and process requests based on user's actions which have been initiated through the [NHS COVID Pass Letter Service Front End](https://github.com/nhsx/covid-pass-letter-backend).
+The main purpose of the NHS COVID Pass Letter Service Back End is to manage and process requests based on user's actions which have been initiated through the [NHS COVID Pass Letter Service Front End](https://github.com/nhsx/covid-pass-letter-frontend).
 
 ## Prerequisites
 

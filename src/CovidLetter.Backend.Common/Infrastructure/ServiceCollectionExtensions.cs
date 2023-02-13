@@ -58,7 +58,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         var telemetry = TelemetryConfiguration.CreateDefault();
-        telemetry.InstrumentationKey = configuration[StringConsts.AppInsightsKey] ?? string.Empty;
+        var instrumentationKey = configuration[StringConsts.AppInsightsKey] ?? string.Empty;
+        telemetry.ConnectionString = $"InstrumentationKey={instrumentationKey}";
 
         services.AddSingleton(typeof(AppEventLogger<>));
         return services;

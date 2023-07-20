@@ -1,8 +1,8 @@
 # Covid Pass Letter Service Back End
 
-It has integrations with the [NHS COVID Pass Back End](https://github.com/nhsx/covid-pass-backend) which itself integrates with NHSD to retrieve an individuals medical exemptions and test results.
+It has integrations with the [NHS COVID Pass Back End](https://github.com/ukhsa-collaboration/covid-pass-backend) which itself integrates with NHSD to retrieve an individuals medical exemptions and test results.
 
-The main purpose of the NHS COVID Pass Letter Service Back End is to manage and process requests based on user's actions which have been initiated through the [NHS COVID Pass Letter Service Front End](https://github.com/nhsx/covid-pass-letter-frontend).
+The main purpose of the NHS COVID Pass Letter Service Back End is to manage and process requests based on user's actions which have been initiated through the [NHS COVID Pass Letter Service Front End](https://github.com/ukhsa-collaboration/covid-pass-letter-frontend).
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ You should also have/install:
 To clone the repository:
 
 1. Open a new CMD instance (if installed use git bash) and navigate to the destination directory where you'd like the cloned repository to exist. If necessary, create this folder first.
-2. Execute the command: git clone https://github.com/nhsx/covid-pass-letter-backend.git
+2. Execute the command: git clone https://github.com/ukhsa-collaboration/covid-pass-letter-backend.git
 
 ## For More Information
 
@@ -34,4 +34,4 @@ If you have further questions about the NHS COVID Pass Letter or email service p
 
 **Link to the licence file**
 
-https://github.com/nhsx/covid-pass-letter-backend/blob/main/LICENSE
+https://github.com/ukhsa-collaboration/covid-pass-letter-backend/blob/main/LICENSE

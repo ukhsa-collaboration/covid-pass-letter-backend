@@ -59,14 +59,14 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendLetterAsync(NotificationLetterAddress address, string templateId, NotificationPersonalisation? personalisation = null, string? correlationId = null)
+    public async Task SendLetterAsync(NotificationLetterAddress letterAddress, string templateId, NotificationPersonalisation? personalisation = null, string? correlationId = null)
     {
-        Ensure.NotNull(address);
+        Ensure.NotNull(letterAddress);
         Ensure.NotNullOrWhiteSpace(templateId);
 
         // add mandatory address components to personalisation
         personalisation ??= new NotificationPersonalisation();
-        personalisation.AddRange(address.ToNotificationPersonalisation());
+        personalisation.AddRange(letterAddress.ToNotificationPersonalisation());
 
         try
         {

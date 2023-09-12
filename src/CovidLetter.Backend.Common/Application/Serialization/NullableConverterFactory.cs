@@ -11,9 +11,9 @@ public class NullableConverterFactory : JsonConverterFactory
 
     public override bool CanConvert(Type typeToConvert) => Nullable.GetUnderlyingType(typeToConvert) != null;
 
-    public override JsonConverter CreateConverter(Type type, JsonSerializerOptions options) =>
+    public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options) =>
         (JsonConverter)Activator.CreateInstance(
-            typeof(NullableConverter<>).MakeGenericType(Nullable.GetUnderlyingType(type)!),
+            typeof(NullableConverter<>).MakeGenericType(Nullable.GetUnderlyingType(typeToConvert)!),
             BindingFlags.Instance | BindingFlags.Public,
             binder: null,
             args: new object[] { options },

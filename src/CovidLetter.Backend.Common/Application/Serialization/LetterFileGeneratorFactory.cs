@@ -4,13 +4,6 @@ using CovidLetter.Backend.Common.Options;
 
 public class LetterFileGeneratorFactory : IFileGeneratorFactory<Letter>
 {
-    private readonly FeatureToggle featureToggle;
-
-    public LetterFileGeneratorFactory(FeatureToggle featureToggle)
-    {
-        this.featureToggle = featureToggle;
-    }
-
     public FileGenerator<Letter> Create()
     {
         return new FileGenerator<Letter>()

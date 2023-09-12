@@ -23,8 +23,8 @@ public class CanonicalLetter
 
     public IReadOnlyCollection<VaccineTravelPass> VaccineTravelPasses
     {
-        get => this.vaccineTravelPasses.OrderByDescending(vtp => vtp.VaccinationEvent.DateOfDose).ToList();
-        set => this.vaccineTravelPasses = value.ToList();
+        get => this.vaccineTravelPasses;
+        set => this.vaccineTravelPasses = value.OrderByDescending(vtp => vtp.VaccinationEvent.DateOfDose).ToList();
     }
 
     public IReadOnlyCollection<RecoveryPass>? RecoveryPasses { get; set; } = ImmutableList<RecoveryPass>.Empty;

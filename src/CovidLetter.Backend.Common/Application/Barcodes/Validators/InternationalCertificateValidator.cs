@@ -17,7 +17,9 @@ public class InternationalCertificateValidator
         this.options = options;
     }
 
-    public ValidationResult Validate(Barcode<InternationalSchema> barcode, Bundle source)
+    public ValidationResult Validate(
+        Barcode<InternationalSchema> barcode,
+        Bundle source)
     {
         var schema = barcode.Certificate.HCert.Schema;
 
@@ -31,7 +33,7 @@ public class InternationalCertificateValidator
             return ValidationResult.Failed("Invalid certificate: No vaccinations");
         }
 
-        if (!schema.Vaccinations.All(MatchVaccination))
+        if (!schema.Vaccinations.All(currentVaccination => MatchVaccination(currentVaccination, barcode, source)))
         {
             return this.options.IncludePiiInErrors
                 ? ValidationResult.Failed(
@@ -40,61 +42,69 @@ public class InternationalCertificateValidator
         }
 
         return ValidationResult.Successful();
+    }
 
-        bool MatchVaccination(Vaccination vaccination)
+    private static bool MatchVaccination(
+        Vaccination vaccination,
+        Barcode<InternationalSchema> barcode,
+        Bundle source)
+    {
+        var entry = source.Entry;
+
+        return entry.Any(currentEntry => MatchLocation(currentEntry, vaccination))
+               && entry.Any(currentEntry => MatchEntryVaccination(currentEntry, barcode, vaccination))
+               && vaccination.CertificateIssuer == BarcodeConstants.NhsDigital
+               && vaccination.DiseaseTargeted == BarcodeConstants.DiseaseTargeted;
+    }
+
+    private static bool MatchLocation(
+        Bundle.EntryComponent e,
+        Vaccination vaccination)
+    {
+        return vaccination.Country == BarcodeConstants.GB
+               || (e.Resource is Location l && l.Address?.Country == vaccination.Country);
+    }
+
+    private static bool MatchEntryVaccination(
+        Bundle.EntryComponent e,
+        Barcode<InternationalSchema> barcode,
+        Vaccination vaccination)
+    {
+        if (e.Resource is not Immunization i)
         {
-            var entry = source.Entry;
-
-            return entry.Any(MatchLocation)
-                   && entry.Any(MatchVaccination)
-                   && vaccination.CertificateIssuer == BarcodeConstants.NhsDigital
-                   && vaccination.DiseaseTargeted == BarcodeConstants.DiseaseTargeted;
-
-            bool MatchLocation(Bundle.EntryComponent e)
-            {
-                return vaccination.Country == BarcodeConstants.GB
-                       || (e.Resource is Location l && l.Address?.Country == vaccination.Country);
-            }
-
-            bool MatchVaccination(Bundle.EntryComponent e)
-            {
-                if (e.Resource is not Immunization i)
-                {
-                    return false;
-                }
-
-                if (i.Id != barcode.Id)
-                {
-                    return false;
-                }
-
-                if (i.Occurrence is not FhirDateTime)
-                {
-                    return false;
-                }
-
-                if (i.ProtocolApplied[0].DoseNumber is not PositiveInt dn)
-                {
-                    return false;
-                }
-
-                if (dn.Value != vaccination.DoseNumber)
-                {
-                    return false;
-                }
-
-                if (i.ProtocolApplied[0].SeriesDoses is not PositiveInt sd)
-                {
-                    return false;
-                }
-
-                if (sd.Value != vaccination.TotalNumberOfDose)
-                {
-                    return false;
-                }
-
-                return true;
-            }
+            return false;
         }
+
+        if (i.Id != barcode.Id)
+        {
+            return false;
+        }
+
+        if (i.Occurrence is not FhirDateTime)
+        {
+            return false;
+        }
+
+        if (i.ProtocolApplied[0].DoseNumber is not PositiveInt dn)
+        {
+            return false;
+        }
+
+        if (dn.Value != vaccination.DoseNumber)
+        {
+            return false;
+        }
+
+        if (i.ProtocolApplied[0].SeriesDoses is not PositiveInt sd)
+        {
+            return false;
+        }
+
+        if (sd.Value != vaccination.TotalNumberOfDose)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

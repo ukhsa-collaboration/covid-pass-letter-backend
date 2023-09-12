@@ -12,20 +12,17 @@ namespace CovidLetter.Backend.Processing.Functions
     using CovidLetter.Backend.Common.Utilities;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
     public class PDFFailureFunction
     {
         private readonly IQueuePoster queuePoster;
-        private readonly ILogger<PDFFailureFunction> log;
         private readonly ServiceBusClient serviceBusClient;
         private readonly ServiceBusSender serviceBusSender;
 
-        public PDFFailureFunction(IQueuePoster queuePoster, ILogger<PDFFailureFunction> log)
+        public PDFFailureFunction(IQueuePoster queuePoster)
         {
             this.queuePoster = queuePoster;
-            this.log = log;
             this.serviceBusClient = new ServiceBusClient(Environment.GetEnvironmentVariable("ConnectionStrings__ServiceBus"));
             this.serviceBusSender = this.serviceBusClient.CreateSender(Environment.GetEnvironmentVariable("FailureTopic"));
         }

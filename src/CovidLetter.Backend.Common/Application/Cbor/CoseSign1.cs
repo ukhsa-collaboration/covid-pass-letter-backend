@@ -19,11 +19,12 @@ public class CoseSign1 : ICoseSign1
 
     private static readonly byte[] ExternalData = Array.Empty<byte>();
 
-    private readonly CBORObject protectedAttributes;
-    private readonly byte[] protectedAttributesEncoding;
     private readonly CBORObject unprotectedAttributes;
     private readonly byte[]? content;
     private readonly byte[] signature;
+
+    private CBORObject? protectedAttributes;
+    private byte[]? protectedAttributesEncoding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoseSign1"/> class.
@@ -37,18 +38,7 @@ public class CoseSign1 : ICoseSign1
             throw new CBORException("Supplied message is not a valid COSE security object");
         }
 
-        if (message.IsTagged)
-        {
-            if (message.GetAllTags().Length != 1)
-            {
-                throw new CBORException("Invalid object - too many tags");
-            }
-
-            if (message.MostInnerTag.ToInt32Unchecked() != MESSAGETAG)
-            {
-                throw new CBORException($"Invalid COSE_Sign1 structure - Expected {MESSAGETAG} tag - but was {message.MostInnerTag.ToInt32Unchecked()}");
-            }
-        }
+        CheckIfMessageIsTagged(message);
 
         if (message.Count != 4)
         {
@@ -57,20 +47,7 @@ public class CoseSign1 : ICoseSign1
 
         if (message[0].Type == CBORType.ByteString)
         {
-            this.protectedAttributesEncoding = message[0].GetByteString();
-
-            if (message[0].GetByteString().Length == 0)
-            {
-                this.protectedAttributes = CBORObject.NewMap();
-            }
-            else
-            {
-                this.protectedAttributes = CBORObject.DecodeFromBytes(this.protectedAttributesEncoding);
-                if (this.protectedAttributes.Count == 0)
-                {
-                    this.protectedAttributesEncoding = Array.Empty<byte>();
-                }
-            }
+            this.AssignProtectedAttributes(message);
         }
         else
         {
@@ -108,9 +85,44 @@ public class CoseSign1 : ICoseSign1
         }
     }
 
+    private void AssignProtectedAttributes(CBORObject message)
+    {
+        this.protectedAttributesEncoding = message[0].GetByteString();
+
+        if (message[0].GetByteString().Length == 0)
+        {
+            this.protectedAttributes = CBORObject.NewMap();
+        }
+        else
+        {
+            this.protectedAttributes = CBORObject.DecodeFromBytes(this.protectedAttributesEncoding);
+            if (this.protectedAttributes.Count == 0)
+            {
+                this.protectedAttributesEncoding = Array.Empty<byte>();
+            }
+        }
+    }
+
+    private static void CheckIfMessageIsTagged(CBORObject message)
+    {
+        if (message.IsTagged)
+        {
+            if (message.GetAllTags().Length != 1)
+            {
+                throw new CBORException("Invalid object - too many tags");
+            }
+
+            if (message.MostInnerTag.ToInt32Unchecked() != MESSAGETAG)
+            {
+                throw new CBORException(
+                    $"Invalid COSE_Sign1 structure - Expected {MESSAGETAG} tag - but was {message.MostInnerTag.ToInt32Unchecked()}");
+            }
+        }
+    }
+
     public byte[]? GetKeyIdentifier()
     {
-        var kid = this.protectedAttributes[HeaderParameterKey.KID] ?? this.unprotectedAttributes[HeaderParameterKey.KID];
+        var kid = this.protectedAttributes?[HeaderParameterKey.KID] ?? this.unprotectedAttributes[HeaderParameterKey.KID];
 
         return kid?.GetByteString();
     }
@@ -150,7 +162,7 @@ public class CoseSign1 : ICoseSign1
 
         var signedData = obj.EncodeToBytes();
 
-        var registeredAlgorithm = this.protectedAttributes[HeaderParameterKey.ALGORITHIM];
+        var registeredAlgorithm = this.protectedAttributes?[HeaderParameterKey.ALGORITHIM];
         if (registeredAlgorithm == null)
         {
             return false;

@@ -10,7 +10,7 @@ The main purpose of the NHS COVID Pass Letter Service Back End is to manage and 
 
 GIT is used for version/source control. 
 
-GIT can be installed from here: [https://git-scm.com/](https://git-scm.com/)
+GIT can be installed from here: [https://git-scm.com/](https://git-scm.com/).
 
 You will be prompted to answer a series of questions when installing GIT on Windows. You should select the following two configuration options where possible (otherwise use the default selected):
 

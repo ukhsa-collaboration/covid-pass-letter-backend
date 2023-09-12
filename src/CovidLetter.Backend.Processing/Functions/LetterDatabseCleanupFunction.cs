@@ -1,6 +1,5 @@
 namespace CovidLetter.Backend.Processing.Functions;
 
-using CovidLetter.Backend.Common.Application.Logger;
 using CovidLetter.Backend.Common.Infrastructure.Postgres;
 using CovidLetter.Backend.Common.Options;
 using Microsoft.Azure.WebJobs;
@@ -14,20 +13,17 @@ public class LetterDatabseCleanupFunction
     private readonly PostgresLetterStore letterStore;
     private readonly IClock clock;
     private readonly ILogger<LetterDatabseCleanupFunction> log;
-    private readonly AppEventLogger<LetterDatabseCleanupFunction> appEventLogger;
 
     public LetterDatabseCleanupFunction(
         ILogger<LetterDatabseCleanupFunction> log,
         AppFunction appFunction,
         PostgresLetterStore letterStore,
-        IClock clock,
-        AppEventLogger<LetterDatabseCleanupFunction> appEventLogger)
+        IClock clock)
     {
         this.log = log;
         this.appFunction = appFunction;
         this.letterStore = letterStore;
         this.clock = clock;
-        this.appEventLogger = appEventLogger;
     }
 
     [FunctionName(AppFunction.LetterDatabaseCleanup)]
